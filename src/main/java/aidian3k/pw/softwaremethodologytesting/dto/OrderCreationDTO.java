@@ -1,5 +1,6 @@
 package aidian3k.pw.softwaremethodologytesting.dto;
 
+import aidian3k.pw.softwaremethodologytesting.domain.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,5 +16,6 @@ import java.util.List;
 @Builder
 public class OrderCreationDTO {
     private Long clientId;
-    private List<Long> productsId;
+    private List<Long> productsIds;
+    private Status status;
 }

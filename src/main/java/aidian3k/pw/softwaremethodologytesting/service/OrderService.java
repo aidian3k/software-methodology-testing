@@ -1,6 +1,6 @@
 package aidian3k.pw.softwaremethodologytesting.service;
 
-import aidian3k.pw.softwaremethodologytesting.domain.Status;
+
 import aidian3k.pw.softwaremethodologytesting.dto.OrderCreationDTO;
 import aidian3k.pw.softwaremethodologytesting.entity.Client;
 import aidian3k.pw.softwaremethodologytesting.entity.Order;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -24,14 +23,14 @@ public class OrderService {
 
     public Order createNewOrder(OrderCreationDTO orderCreationDTO) {
         Client client = clientService.getClientById(orderCreationDTO.getClientId());
-        List<Product> products = productService.getProductsByIds(orderCreationDTO.getProductsId());
+        List<Product> products = productService.getProductsByIds(orderCreationDTO.getProductsIds());
         validateProductAvailability(products);
 
         Order order = Order
                 .builder()
                 .client(client)
                 .products(products)
-                .status(Status.NEW)
+                .status(orderCreationDTO.getStatus())
                 .build();
 
         client.getOrders().add(order);
@@ -40,6 +39,17 @@ public class OrderService {
         orderRepository.save(order);
 
         return order;
+    }
+
+    public Order updateOrder(Long orderId, OrderCreationDTO creationDTO) {
+        Order currentOrder = getOrderById(orderId);
+        Order modifiedOrder = currentOrder
+                .toBuilder()
+                .client(clientService.getClientById(creationDTO.getClientId()))
+                .products(productService.getProductsByIds(creationDTO.getProductsIds()))
+                .build();
+
+        return orderRepository.save(modifiedOrder);
     }
 
     public void cancelOrder(Long orderId) {

@@ -2,6 +2,7 @@ package aidian3k.pw.softwaremethodologytesting.entity;
 
 import aidian3k.pw.softwaremethodologytesting.domain.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,11 +34,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_seq")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @JsonIgnore
     private Client client;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = {CascadeType.ALL})
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private List<Product> products = new ArrayList<>();
