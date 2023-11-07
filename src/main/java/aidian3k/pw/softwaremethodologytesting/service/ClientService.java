@@ -4,10 +4,11 @@ import aidian3k.pw.softwaremethodologytesting.dto.ClientCreationDTO;
 import aidian3k.pw.softwaremethodologytesting.entity.Client;
 import aidian3k.pw.softwaremethodologytesting.infrastructure.exception.ClientNotFoundException;
 import aidian3k.pw.softwaremethodologytesting.repository.ClientRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +55,10 @@ public class ClientService {
 			.build();
 
 		return clientRepository.save(updatedClient);
+	}
+
+	public void deleteClientById(Long clientId) {
+		clientRepository.deleteById(clientId);
 	}
 
 	public Client updateClient(Client updatedClient) {

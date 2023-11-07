@@ -6,11 +6,12 @@ import aidian3k.pw.softwaremethodologytesting.entity.Order;
 import aidian3k.pw.softwaremethodologytesting.entity.Product;
 import aidian3k.pw.softwaremethodologytesting.infrastructure.exception.OrderNotFoundException;
 import aidian3k.pw.softwaremethodologytesting.repository.OrderRepository;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -82,7 +83,11 @@ public class OrderService {
 	}
 
 	public List<Order> getAllClientOrders(Long clientId) {
-		return orderRepository.findByClient(clientId).orElseThrow();
+		return orderRepository
+				.findAll()
+				.stream()
+				.filter(order -> order.getClient().getId().equals(clientId))
+				.toList();
 	}
 
 	public Order getOrderById(Long orderId) {
