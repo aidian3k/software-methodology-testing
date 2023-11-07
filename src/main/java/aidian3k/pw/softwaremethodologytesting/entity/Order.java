@@ -12,6 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -20,9 +22,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity(name = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,19 +29,24 @@ import java.util.List;
 @Getter
 @Setter
 public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_seq")
-    private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-    @JsonIgnore
-    private Client client;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orders_seq")
+	private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = {CascadeType.ALL})
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    private List<Product> products = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+	@JsonIgnore
+	private Client client;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
+	@OneToMany(
+		fetch = FetchType.LAZY,
+		mappedBy = "order",
+		cascade = { CascadeType.ALL }
+	)
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	private List<Product> products = new ArrayList<>();
+
+	@Enumerated(EnumType.STRING)
+	private Status status;
 }

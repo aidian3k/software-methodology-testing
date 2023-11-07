@@ -15,14 +15,15 @@ import lombok.Setter;
 @Setter
 @Builder
 public class ClientCreationDTO {
-    @NotNull
-    @Size(max=255)
-    private String name;
 
-    @NotNull
-    @Size(max=255)
-    private String surname;
+	@NotNull
+	@Size(max = 255)
+	private String name;
 
-    @Email
-    private String email;
+	@NotNull
+	@Size(max = 255)
+	private String surname;
+
+	@Email
+	private String email;
 }

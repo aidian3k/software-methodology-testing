@@ -1,12 +1,11 @@
 package aidian3k.pw.softwaremethodologytesting.infrastructure.exception;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +13,8 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class ExceptionResponse {
-    private String throwableName;
-    private LocalDateTime time;
-    private int responseStatus;
+
+	private String throwableName;
+	private LocalDateTime time;
+	private int responseStatus;
 }

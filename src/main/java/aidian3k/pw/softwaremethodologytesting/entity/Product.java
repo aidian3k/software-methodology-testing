@@ -14,6 +14,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -23,10 +26,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity(name = "products")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,30 +33,34 @@ import java.util.List;
 @Getter
 @Setter
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "products_seq")
-    private Long id;
 
-    @NotNull
-    @Size(max = 255)
-    private String name;
+	@Id
+	@GeneratedValue(
+		strategy = GenerationType.SEQUENCE,
+		generator = "products_seq"
+	)
+	private Long id;
 
-    @NotNull
-    @Positive
-    private double price;
+	@NotNull
+	@Size(max = 255)
+	private String name;
 
-    @NotNull
-    @Positive
-    private int availability;
+	@NotNull
+	@Positive
+	private double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @Builder.Default
-    private Order order;
+	@NotNull
+	@Positive
+	private int availability;
 
-    @UpdateTimestamp
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime updateDate;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@EqualsAndHashCode.Exclude
+	@ToString.Exclude
+	@Builder.Default
+	private Order order;
+
+	@UpdateTimestamp
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	private LocalDateTime updateDate;
 }

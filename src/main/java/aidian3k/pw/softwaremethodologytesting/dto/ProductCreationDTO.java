@@ -15,15 +15,16 @@ import lombok.Setter;
 @Setter
 @Builder
 public class ProductCreationDTO {
-    @NotNull
-    @Size(max=255)
-    private String name;
 
-    @NotNull
-    @Positive
-    private double price;
+	@NotNull
+	@Size(max = 255)
+	private String name;
 
-    @NotNull
-    @Positive
-    private int availability;
+	@NotNull
+	@Positive
+	private double price;
+
+	@NotNull
+	@Positive
+	private int availability;
 }

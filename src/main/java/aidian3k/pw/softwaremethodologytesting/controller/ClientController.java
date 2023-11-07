@@ -9,6 +9,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/client")
 @Validated
-class ClientController {
-
-}
+class ClientController {}
