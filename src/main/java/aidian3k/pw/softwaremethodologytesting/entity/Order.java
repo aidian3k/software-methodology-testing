@@ -44,6 +44,7 @@ public class Order {
 	)
 	@EqualsAndHashCode.Exclude
 	@ToString.Exclude
+	@Builder.Default
 	private List<Product> products = new ArrayList<>();
 
 	@Enumerated(EnumType.STRING)

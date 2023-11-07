@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,114 +17,168 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class ProductServiceTest {
-    @Autowired
-    private ProductService productService;
 
-    @Test
-    void shouldCreateNewProductsCorrectlyWithoutProblems() {
-        // Given
-        ProductCreationDTO productCreationDTO = new ProductCreationDTO("Test Product", 29.99, 30);
+	private final Logger log = Logger.getLogger(
+		ProductServiceTest.class.getName()
+	);
 
-        // When
-        Product createdProduct = productService.createNewProduct(productCreationDTO);
+	@Autowired
+	private ProductService productService;
 
-        // Then
-        assertThat(createdProduct).isNotNull();
-        assertThat(createdProduct.getId()).isNotNull();
-        assertThat(createdProduct.getName()).isEqualTo(productCreationDTO.getName());
-        assertThat(createdProduct.getAvailability()).isEqualTo(productCreationDTO.getAvailability());
-        assertThat(createdProduct.getPrice()).isEqualTo(productCreationDTO.getPrice());
-    }
+	@Test
+	void shouldCreateNewProductsCorrectlyWithoutProblems() {
+		// Given
+		ProductCreationDTO productCreationDTO = new ProductCreationDTO(
+			"Test Product",
+			29.99,
+			30
+		);
 
-    @Test
-    void shouldCorrectlyGetNewProductById() {
-        // Given
-        ProductCreationDTO productCreationDTO = new ProductCreationDTO("Test Product", 10, 30);
-        Product createdProduct = productService.createNewProduct(productCreationDTO);
+		// When
+		Product createdProduct = productService.createNewProduct(
+			productCreationDTO
+		);
 
-        // When
-        Product retrievedProduct = productService.getProductById(createdProduct.getId());
+		// Then
+		assertThat(createdProduct).isNotNull();
+		assertThat(createdProduct.getId()).isNotNull();
+		assertThat(createdProduct.getName())
+			.isEqualTo(productCreationDTO.getName());
+		assertThat(createdProduct.getAvailability())
+			.isEqualTo(productCreationDTO.getAvailability());
+		assertThat(createdProduct.getPrice())
+			.isEqualTo(productCreationDTO.getPrice());
+	}
 
-        // Then
-        assertThat(retrievedProduct).isNotNull();
-        assertThat(createdProduct.getId()).isEqualTo(retrievedProduct.getId());
-        assertThat(createdProduct.getName()).isEqualTo(retrievedProduct.getName());
-        assertThat(createdProduct.getAvailability()).isEqualTo(retrievedProduct.getAvailability());
-        assertThat(createdProduct.getPrice()).isEqualTo(retrievedProduct.getPrice());
-    }
+	@Test
+	void shouldCorrectlyGetNewProductById() {
+		// Given
+		log.info("Testing getting product by id");
+		ProductCreationDTO productCreationDTO = new ProductCreationDTO(
+			"Test Product",
+			10,
+			30
+		);
+		Product createdProduct = productService.createNewProduct(
+			productCreationDTO
+		);
 
-    @Test
-    void shouldCorrectlyUpdateExistingProduct() {
-        // Given
-        ProductCreationDTO productCreationDTO = new ProductCreationDTO("Test Product", 10, 20);
-        Product createdProduct = productService.createNewProduct(productCreationDTO);
+		// When
+		Product retrievedProduct = productService.getProductById(
+			createdProduct.getId()
+		);
+		log.info("Retrieved product with id=" + retrievedProduct.getId());
 
-        // When
-        Product updatedProduct = productService.updateProductById(
-                createdProduct.getId(),
-                new ProductCreationDTO("Updated Product", 5, 20)
-        );
-        Product productAfterUpdate = productService.getProductById(updatedProduct.getId());
+		// Then
+		assertThat(retrievedProduct).isNotNull();
+		assertThat(createdProduct.getId()).isEqualTo(retrievedProduct.getId());
+		assertThat(createdProduct.getName()).isEqualTo(retrievedProduct.getName());
+		assertThat(createdProduct.getAvailability())
+			.isEqualTo(retrievedProduct.getAvailability());
+		assertThat(createdProduct.getPrice())
+			.isEqualTo(retrievedProduct.getPrice());
+	}
 
-        // Then
-        assertThat(updatedProduct).isNotNull();
-        assertEquals(updatedProduct.getId(), productAfterUpdate.getId());
-        assertThat(updatedProduct.getName()).isEqualTo(productAfterUpdate.getName());
-        assertThat(updatedProduct.getAvailability()).isEqualTo(productAfterUpdate.getAvailability());
-        assertThat(updatedProduct.getPrice()).isEqualTo(productAfterUpdate.getPrice());
-    }
-    @Test
-    void shouldCorrectlyGetProductsByIds() {
-        // Given
-        ProductCreationDTO product1 = new ProductCreationDTO("Product 1", 10, 30);
-        ProductCreationDTO product2 = new ProductCreationDTO("Product 2", 5, 20);
-        Product createdProduct1 = productService.createNewProduct(product1);
-        Product createdProduct2 = productService.createNewProduct(product2);
+	@Test
+	void shouldCorrectlyUpdateExistingProduct() {
+		// Given
+		ProductCreationDTO productCreationDTO = new ProductCreationDTO(
+			"Test Product",
+			10,
+			20
+		);
+		Product createdProduct = productService.createNewProduct(
+			productCreationDTO
+		);
 
-        // When
-        List<Product> products = productService.getProductsByIds(List.of(createdProduct1.getId(), createdProduct2.getId()));
+		// When
+		Product updatedProduct = productService.updateProductById(
+			createdProduct.getId(),
+			new ProductCreationDTO("Updated Product", 5, 20)
+		);
+		Product productAfterUpdate = productService.getProductById(
+			updatedProduct.getId()
+		);
+		log.info("Product after update has name=" + productAfterUpdate.getName());
 
-        // Then
-        assertThat(products).hasSize(2);
-        assertThat(products).extracting("name").contains("Product 1", "Product 2");
-    }
+		// Then
+		assertThat(updatedProduct).isNotNull();
+		assertEquals(updatedProduct.getId(), productAfterUpdate.getId());
+		assertThat(updatedProduct.getName())
+			.isEqualTo(productAfterUpdate.getName());
+		assertThat(updatedProduct.getAvailability())
+			.isEqualTo(productAfterUpdate.getAvailability());
+		assertThat(updatedProduct.getPrice())
+			.isEqualTo(productAfterUpdate.getPrice());
+	}
 
-    @Test
-    void shouldThrowExceptionWhenTryingToFindNonExistingValue() {
-        // Given a non-existing product ID
-        Long nonExistentProductId = 9999L;
+	@Test
+	void shouldCorrectlyGetProductsByIds() {
+		// Given
+		ProductCreationDTO product1 = new ProductCreationDTO("Product 1", 10, 30);
+		ProductCreationDTO product2 = new ProductCreationDTO("Product 2", 5, 20);
+		Product createdProduct1 = productService.createNewProduct(product1);
+		Product createdProduct2 = productService.createNewProduct(product2);
 
-        // When trying to get the product by the non-existing ID
-        // Then an exception should be thrown
-        assertThrows(ProductNotFoundException.class, () -> {
-            productService.getProductById(nonExistentProductId);
-        });
-    }
+		// When
+		List<Product> products = productService.getProductsByIds(
+			List.of(createdProduct1.getId(), createdProduct2.getId())
+		);
 
-    @Test
-    void shouldThrowAnExceptionWhenTryingToUpdateNonExistingService() {
-        // Given
-        Long nonExistentProductId = 9999L;
-        ProductCreationDTO updateDTO = new ProductCreationDTO("Updated Product", 5, 20);
+		// Then
+		assertThat(products).hasSize(2);
+		assertThat(products).extracting("name").contains("Product 1", "Product 2");
+	}
 
-        // When trying to update the product by the non-existing ID
-        // Then an exception should be thrown
-        assertThrows(ProductNotFoundException.class, () -> {
-            productService.updateProductById(nonExistentProductId, updateDTO);
-        });
-    }
+	@Test
+	void shouldThrowExceptionWhenTryingToFindNonExistingValue() {
+		// Given a non-existing product ID
+		Long nonExistentProductId = 9999L;
 
-    @Test
-    void shouldThrowAnExceptionWhenTryingToDeleteNonExistingProduct() {
-        // Given a non-existing product ID
-        Long nonExistentProductId = 9999L;
+		// When trying to get the product by the non-existing ID
+		// Then an exception should be thrown
+		assertThrows(
+			ProductNotFoundException.class,
+			() -> {
+				productService.getProductById(nonExistentProductId);
+			}
+		);
+	}
 
-        // When trying to delete the product by the non-existing ID
-        productService.deleteProductById(nonExistentProductId);
+	@Test
+	void shouldThrowAnExceptionWhenTryingToUpdateNonExistingService() {
+		// Given
+		Long nonExistentProductId = 9999L;
+		ProductCreationDTO updateDTO = new ProductCreationDTO(
+			"Updated Product",
+			5,
+			20
+		);
 
-        // Check if the product was successfully deleted
-        assertThrows(ProductNotFoundException.class, () -> {
-            productService.getProductById(nonExistentProductId);
-        });
-    }
+		// When trying to update the product by the non-existing ID
+		// Then an exception should be thrown
+		assertThrows(
+			ProductNotFoundException.class,
+			() -> {
+				productService.updateProductById(nonExistentProductId, updateDTO);
+			}
+		);
+	}
+
+	@Test
+	void shouldThrowAnExceptionWhenTryingToDeleteNonExistingProduct() {
+		// Given a non-existing product ID
+		Long nonExistentProductId = 9999L;
+
+		// When trying to delete the product by the non-existing ID
+		productService.deleteProductById(nonExistentProductId);
+
+		// Check if the product was successfully deleted
+		assertThrows(
+			ProductNotFoundException.class,
+			() -> {
+				productService.getProductById(nonExistentProductId);
+			}
+		);
+	}
 }

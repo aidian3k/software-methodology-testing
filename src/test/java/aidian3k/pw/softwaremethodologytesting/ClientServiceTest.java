@@ -9,16 +9,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,146 +25,195 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ClientServiceTest {
-    @Mock
-    private ClientRepository clientRepository;
 
-    @InjectMocks
-    private ClientService clientService;
+	private final Logger log = Logger.getLogger(
+		ClientServiceTest.class.getName()
+	);
 
-    @Test
-    @DisplayName("Sample create test")
-    void shouldCreateCorrectlyNewClientWhenProvidedDataIsCorrect() {
-        // given
-        ClientCreationDTO creationDTO = sampleClientCreationDTO();
+	@Mock
+	private ClientRepository clientRepository;
 
-        // when
-        Client sampleClient = Client
-                .builder()
-                .surname(sampleClientCreationDTO().getSurname())
-                .name(sampleClientCreationDTO().getName())
-                .email(sampleClientCreationDTO().getEmail())
-                .id(1L)
-                .build();
-        when(clientRepository.save(any())).thenReturn(sampleClient);
-        Client client = clientService.createNewClient(creationDTO);
+	@InjectMocks
+	private ClientService clientService;
 
-        // then
-        assertAll(
-                () -> assertThat(client.getName()).isEqualTo(creationDTO.getName()),
-                () -> assertThat(client.getSurname()).isEqualTo(creationDTO.getSurname()),
-                () -> assertThat(client.getEmail()).isEqualTo(creationDTO.getEmail())
-        );
-    }
+	@Test
+	@DisplayName("Sample create test")
+	void shouldCreateCorrectlyNewClientWhenProvidedDataIsCorrect() {
+		// given
+		ClientCreationDTO creationDTO = sampleClientCreationDTO();
 
-    @ParameterizedTest
-    @MethodSource(value = "provideSampleClientCreationData")
-    @DisplayName("Sample parametrized test")
-    void shouldCorrectlyCreateNewClientWhenTryingToAddMultipleClients(ClientCreationDTO clientCreationDTO) {
-        // when
-        Client sampleClient = Client
-                .builder()
-                .surname(clientCreationDTO.getSurname())
-                .name(clientCreationDTO.getName())
-                .email(clientCreationDTO.getEmail())
-                .id(1L)
-                .build();
-        when(clientRepository.save(any())).thenReturn(sampleClient);
-        Client client = clientService.createNewClient(clientCreationDTO);
+		// when
+		Client sampleClient = Client
+			.builder()
+			.surname(sampleClientCreationDTO().getSurname())
+			.name(sampleClientCreationDTO().getName())
+			.email(sampleClientCreationDTO().getEmail())
+			.id(1L)
+			.build();
+		when(clientRepository.save(any())).thenReturn(sampleClient);
+		Client client = clientService.createNewClient(creationDTO);
+		log.info(
+			"Sample create test is done on client with name=" + client.getName()
+		);
 
-        // then
-        assertAll(
-                () -> assertThat(client.getName()).isEqualTo(clientCreationDTO.getName()),
-                () -> assertThat(client.getSurname()).isEqualTo(clientCreationDTO.getSurname()),
-                () -> assertThat(client.getEmail()).isEqualTo(clientCreationDTO.getEmail())
-        );
-    }
+		// then
+		assertAll(
+			() -> assertThat(client.getName()).isEqualTo(creationDTO.getName()),
+			() -> assertThat(client.getSurname()).isEqualTo(creationDTO.getSurname()),
+			() -> assertThat(client.getEmail()).isEqualTo(creationDTO.getEmail())
+		);
+	}
 
-    @ParameterizedTest
-    @CsvSource({
-            "1, John, Doe, john.doe@example.com",
-            "2, Jane, Smith, jane.smith@example.com",
-    })
-    void shouldCorrectly(Long clientId, String name, String surname, String email) {
-        // Given
-        Client client = new Client(clientId, name, surname, email, new ArrayList<>());
+	@ParameterizedTest
+	@CsvFileSource(files = "src/test/resources/users-creation-parametrized.csv")
+	@DisplayName("Sample parametrized test")
+	void shouldCorrectlyCreateNewClientWhenTryingToAddMultipleClients(
+		String name, String surname, String email
+	) {
+		// when
+		log.info("Starting testing from file");
+		ClientCreationDTO clientCreationDTO = ClientCreationDTO
+				.builder()
+				.name(name)
+				.surname(surname)
+				.email(email)
+				.build();
 
-        when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
+		Client sampleClient = Client
+			.builder()
+			.surname(clientCreationDTO.getSurname())
+			.name(clientCreationDTO.getName())
+			.email(clientCreationDTO.getEmail())
+			.id(1L)
+			.build();
+		when(clientRepository.save(any())).thenReturn(sampleClient);
+		Client client = clientService.createNewClient(clientCreationDTO);
+		log.info(
+			"Sample create test is done on client with name=" + client.getName()
+		);
 
-        // When
-        Client retrievedClient = clientService.getClientById(clientId);
+		// then
+		assertAll(
+			() -> assertThat(client.getName()).isEqualTo(clientCreationDTO.getName()),
+			() ->
+				assertThat(client.getSurname())
+					.isEqualTo(clientCreationDTO.getSurname()),
+			() ->
+				assertThat(client.getEmail()).isEqualTo(clientCreationDTO.getEmail())
+		);
+	}
 
-        // Then
-        verify(clientRepository, times(1)).findById(clientId);
-    }
+	@ParameterizedTest
+	@CsvSource(
+		{
+			"1, John, Doe, john.doe@example.com",
+			"2, Jane, Smith, jane.smith@example.com",
+		}
+	)
+	void shouldCorrectlyFindUsersByIdWhenTryingToFind(
+		Long clientId,
+		String name,
+		String surname,
+		String email
+	) {
+		// Given
+		Client client = new Client(
+			clientId,
+			name,
+			surname,
+			email,
+			new ArrayList<>()
+		);
 
-    @ParameterizedTest
-    @CsvSource({
-            "1, UpdatedName, UpdatedSurname, updated.email@example.com",
-            "2, AnotherName, AnotherSurname, another.email@example.com",
-    })
-    void testUpdateClientById(Long clientId, String updatedName, String updatedSurname, String updatedEmail) {
-        // Given
-        ClientCreationDTO updateDTO = new ClientCreationDTO(updatedName, updatedSurname, updatedEmail);
+		when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
 
-        Client currentClient = new Client(clientId, "John", "Doe", "john.doe@example.com", new ArrayList<>());
-        Client updatedClient = currentClient.toBuilder()
-                .name(updatedName)
-                .surname(updatedSurname)
-                .email(updatedEmail)
-                .build();
+		// When
+		Client retrievedClient = clientService.getClientById(clientId);
 
-        when(clientRepository.save(any())).thenReturn(updatedClient);
-        when(clientRepository.findById(any())).thenReturn(Optional.of(currentClient));
+		// Then
+		verify(clientRepository, times(1)).findById(clientId);
+		assertThat(retrievedClient.getName()).isEqualTo(client.getName());
+	}
 
-        // When
-        Client result = clientService.updateClientById(clientId, updateDTO);
+	@ParameterizedTest
+	@CsvSource(
+		{
+			"1, UpdatedName, UpdatedSurname, updated.email@example.com",
+			"2, AnotherName, AnotherSurname, another.email@example.com",
+		}
+	)
+	void testUpdateClientById(
+		Long clientId,
+		String updatedName,
+		String updatedSurname,
+		String updatedEmail
+	) {
+		// Given
+		ClientCreationDTO updateDTO = new ClientCreationDTO(
+			updatedName,
+			updatedSurname,
+			updatedEmail
+		);
+		log.info("Performing param test");
 
-        // Then
-        verify(clientRepository, times(1)).save(any());
-        assertEquals(updatedClient, result);
-    }
+		Client currentClient = new Client(
+			clientId,
+			"John",
+			"Doe",
+			"john.doe@example.com",
+			new ArrayList<>()
+		);
+		Client updatedClient = currentClient
+			.toBuilder()
+			.name(updatedName)
+			.surname(updatedSurname)
+			.email(updatedEmail)
+			.build();
 
-    @ParameterizedTest
-    @CsvSource({
-            "1",
-            "2",
-    })
-    void shouldCorrectlyDeleteClientWhenIdIsOkay(Long clientId) {
-        // When
-        clientService.deleteClientById(clientId);
+		when(clientRepository.save(any())).thenReturn(updatedClient);
+		when(clientRepository.findById(any()))
+			.thenReturn(Optional.of(currentClient));
 
-        // Then
-        verify(clientRepository, times(1)).deleteById(clientId);
-    }
+		// When
+		Client result = clientService.updateClientById(clientId, updateDTO);
 
-    @ParameterizedTest
-    @CsvSource({
-            "1",
-            "2",
-    })
-    void shouldThrowAnExceptionWhenIdIsNotCorrect(Long clientId) {
-        // Given
-        doThrow(ClientNotFoundException.class).when(clientRepository).deleteById(anyLong());
+		// Then
+		verify(clientRepository, times(1)).save(any());
+		assertEquals(updatedClient, result);
+	}
 
-        // When and Then
-        assertThrows(ClientNotFoundException.class, () -> {
-            clientService.deleteClientById(clientId);
-        });
-    }
+	@ParameterizedTest
+	@CsvSource({ "1", "2" })
+	void shouldCorrectlyDeleteClientWhenIdIsOkay(Long clientId) {
+		// When
+		clientService.deleteClientById(clientId);
 
-    private static Stream<Arguments> provideSampleClientCreationData() {
-        return Stream.of(
-                Arguments.of(sampleClientCreationDTO().toBuilder().name("cos").build()),
-                Arguments.of(sampleClientCreationDTO().toBuilder().surname("niecos").build()),
-                Arguments.of(sampleClientCreationDTO().toBuilder().email("some-email").build())
-        );
-    }
-    private static ClientCreationDTO sampleClientCreationDTO() {
-        return ClientCreationDTO
-                .builder()
-                .name("adrian")
-                .surname("nowosielski")
-                .email("adrian@wp.pl")
-                .build();
-    }
+		// Then
+		verify(clientRepository, times(1)).deleteById(clientId);
+	}
+
+	@ParameterizedTest
+	@CsvSource({ "1", "2" })
+	void shouldThrowAnExceptionWhenIdIsNotCorrect(Long clientId) {
+		// Given
+		log.info("Stubbing throwing of the void method");
+		doThrow(ClientNotFoundException.class)
+			.when(clientRepository)
+			.deleteById(anyLong());
+
+		// When and Then
+		assertThrows(
+			ClientNotFoundException.class,
+			() -> clientService.deleteClientById(clientId)
+		);
+	}
+
+	private static ClientCreationDTO sampleClientCreationDTO() {
+		return ClientCreationDTO
+			.builder()
+			.name("adrian")
+			.surname("nowosielski")
+			.email("adrian@wp.pl")
+			.build();
+	}
 }

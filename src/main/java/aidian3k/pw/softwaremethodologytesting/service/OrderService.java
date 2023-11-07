@@ -84,10 +84,10 @@ public class OrderService {
 
 	public List<Order> getAllClientOrders(Long clientId) {
 		return orderRepository
-				.findAll()
-				.stream()
-				.filter(order -> order.getClient().getId().equals(clientId))
-				.toList();
+			.findAll()
+			.stream()
+			.filter(order -> order.getClient().getId().equals(clientId))
+			.toList();
 	}
 
 	public Order getOrderById(Long orderId) {
