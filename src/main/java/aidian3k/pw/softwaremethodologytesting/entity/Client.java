@@ -44,7 +44,7 @@ public class Client {
 	private String surname;
 
 	@NotNull
-	@Size(max = 255)
+	@Size(max = 512)
 	private String email;
 
 	@OneToMany(
