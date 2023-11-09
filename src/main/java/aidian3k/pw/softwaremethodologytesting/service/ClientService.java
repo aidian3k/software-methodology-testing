@@ -46,6 +46,7 @@ public class ClientService {
 		Long clientId,
 		ClientCreationDTO clientCreationDTO
 	) {
+		int newVariable = 5;
 		Client currentClient = getClientById(clientId);
 		Client updatedClient = currentClient
 			.toBuilder()
