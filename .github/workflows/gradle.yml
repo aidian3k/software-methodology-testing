@@ -52,7 +52,7 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: software-methodology-app
+          name: software-testing-app
 
       - name: Deploy to Azure Web App
         id: deploy-to-azure
