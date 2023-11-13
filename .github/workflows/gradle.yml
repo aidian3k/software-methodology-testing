@@ -39,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v3.1.3
       with:
         name: software-testing-app
-        path: '${{ github.workspace }}/target/*.jar'
+        path: '${{ github.workspace }}/build/libs/*.jar'
       
   deploy:
     runs-on: ubuntu-latest
