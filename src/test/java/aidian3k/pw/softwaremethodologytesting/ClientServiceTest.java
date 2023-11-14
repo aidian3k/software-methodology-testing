@@ -37,6 +37,11 @@ class ClientServiceTest {
 	private ClientService clientService;
 
 	@Test
+	void failingTest() {
+		assertFalse(true);
+	}
+
+	@Test
 	@DisplayName("Sample create test")
 	void shouldCreateCorrectlyNewClientWhenProvidedDataIsCorrect() {
 		// given

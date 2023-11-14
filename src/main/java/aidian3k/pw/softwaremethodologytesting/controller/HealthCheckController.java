@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 class HealthCheckController {
 
-    @Value("${project.version}")
+    @Value("${version}")
     private String projectVersion;
 
     @GetMapping
