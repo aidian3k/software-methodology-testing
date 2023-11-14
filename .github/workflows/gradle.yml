@@ -34,7 +34,7 @@ jobs:
       run: |
           current_version=$(grep 'application.version' src/main/resources/application.properties | cut -d'=' -f2)
           new_version=$((current_version + 1))
-          sed -i "s/application.version=$current_version/application.version=$new_version/" src/main/resources/application.properties
+          sed -i "s/version=$current_version/version=$new_version/" src/main/resources/application.properties
           echo "New version of project: $new_version"
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
