@@ -34,7 +34,7 @@ jobs:
 
     - name:  Changing version of the project
       run: |
-          current_version=$(grep 'application.version' src/main/resources/application.properties | cut -d'=' -f2)
+          current_version=$(grep 'project.version' src/main/resources/application.properties | cut -d'=' -f2)
           new_version=$((current_version + 1))
           sed -i "s/project.version=$current_version/project.version=$new_version/" src/main/resources/application.properties
           echo "New version of project: $new_version"
