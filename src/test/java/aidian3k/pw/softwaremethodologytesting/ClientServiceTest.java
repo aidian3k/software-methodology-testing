@@ -35,12 +35,7 @@ class ClientServiceTest {
 
 	@InjectMocks
 	private ClientService clientService;
-
-	@Test
-	void failingTest() {
-		assertFalse(true);
-	}
-
+	
 	@Test
 	@DisplayName("Sample create test")
 	void shouldCreateCorrectlyNewClientWhenProvidedDataIsCorrect() {
