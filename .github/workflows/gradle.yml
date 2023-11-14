@@ -24,7 +24,19 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        
+
+    - name: Changing version of project
+      run: |
+          current_version=$(grep -E '^version=' src/main/resources/application.properties | cut -d'=' -f2)
+          new_version=$(echo $current_version | awk -F. '{$NF++; OFS="."; print $0}')
+          sed -i "s/^version=.*/version=$new_version/" application.properties
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add application.properties
+          git commit -m "Bump version to $new_version"
+          git push
+          echo "Updated version to $new_version"
+       
     - name: Build with Gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25
       with:
