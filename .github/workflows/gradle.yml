@@ -27,16 +27,6 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25
-      with:
-        arguments: build
-        
-    - name: Testing with Gradle
-      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25
-      with:
-        arguments: test
 
     - name: Changing version of the project
       run: |
@@ -49,7 +39,17 @@ jobs:
         git add src/main/resources/application.properties
         git commit -m "Increment application version [skip ci]"
         git push
-
+        
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25
+      with:
+        arguments: build
+        
+    - name: Testing with Gradle
+      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25
+      with:
+        arguments: test
+        
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v3.1.3
       with:
