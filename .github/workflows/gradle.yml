@@ -41,7 +41,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add src/main/resources/application.properties
-          git commit -m "Increment application version"
+          git commit -m "Increment application version [skip ci]"
           git push
         
     - name: Testing with Gradle
