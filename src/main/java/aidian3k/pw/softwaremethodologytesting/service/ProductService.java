@@ -4,11 +4,10 @@ import aidian3k.pw.softwaremethodologytesting.dto.ProductCreationDTO;
 import aidian3k.pw.softwaremethodologytesting.entity.Product;
 import aidian3k.pw.softwaremethodologytesting.infrastructure.exception.ProductNotFoundException;
 import aidian3k.pw.softwaremethodologytesting.repository.ProductRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

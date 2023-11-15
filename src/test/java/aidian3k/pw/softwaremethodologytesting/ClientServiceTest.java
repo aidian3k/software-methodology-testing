@@ -1,10 +1,17 @@
 package aidian3k.pw.softwaremethodologytesting;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import aidian3k.pw.softwaremethodologytesting.dto.ClientCreationDTO;
 import aidian3k.pw.softwaremethodologytesting.entity.Client;
 import aidian3k.pw.softwaremethodologytesting.infrastructure.exception.ClientNotFoundException;
 import aidian3k.pw.softwaremethodologytesting.repository.ClientRepository;
 import aidian3k.pw.softwaremethodologytesting.service.ClientService;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,14 +21,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.logging.Logger;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ClientServiceTest {
@@ -68,16 +67,18 @@ class ClientServiceTest {
 	@CsvFileSource(files = "src/test/resources/users-creation-parametrized.csv")
 	@DisplayName("Sample parametrized test")
 	void shouldCorrectlyCreateNewClientWhenTryingToAddMultipleClients(
-		String name, String surname, String email
+		String name,
+		String surname,
+		String email
 	) {
 		// when
 		log.info("Starting testing from file");
 		ClientCreationDTO clientCreationDTO = ClientCreationDTO
-				.builder()
-				.name(name)
-				.surname(surname)
-				.email(email)
-				.build();
+			.builder()
+			.name(name)
+			.surname(surname)
+			.email(email)
+			.build();
 
 		Client sampleClient = Client
 			.builder()

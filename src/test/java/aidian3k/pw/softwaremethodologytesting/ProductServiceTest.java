@@ -1,19 +1,18 @@
 package aidian3k.pw.softwaremethodologytesting;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import aidian3k.pw.softwaremethodologytesting.dto.ProductCreationDTO;
 import aidian3k.pw.softwaremethodologytesting.entity.Product;
 import aidian3k.pw.softwaremethodologytesting.infrastructure.exception.ProductNotFoundException;
 import aidian3k.pw.softwaremethodologytesting.service.ProductService;
+import java.util.List;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
-import java.util.logging.Logger;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 class ProductServiceTest {
